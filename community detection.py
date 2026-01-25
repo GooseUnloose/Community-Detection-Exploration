@@ -17,9 +17,19 @@ class Graph:
         self.partition_edges = [[0 for i in range(0,len(self.partition))] for j in range(0,len(self.partition))]
         
         
-    def visualise_edges(self):
-        for i in range(0,len(self.edges)):
-            print(self.edges[i])
+    def visualise_edges(self,edge='vertices'):
+        match edge:
+            case 'community':
+                edge_list = self.partition_edges
+                
+            case 'vertices':
+                edge_list = self.edges
+                
+            case _:
+                raise Exception('Visualisation can visualise relationships of either graph vertices or communities')
+                
+        for i in range(0,len(edge_list)):
+            print(edge_list[i])
         
     def alter_edge_weight(self,nodes:list[Node],weight:int):
         '''Appends the edge weight between nodes, as the graph isnt directed it is mirrored across the matrix'''
@@ -44,16 +54,17 @@ class Graph:
             if str(self.vertices[i]) == identifier:
                 return i
 
-    def add_community(self,node_list:list[Node]):
+    def add_community(self,new_community:list[Node]):
         '''creates a community based off of a list of Nodes and ads this to the graph parition'''
-        self.partition.append(node_list)
+        self.partition.append(new_community)
         
-        '''creates a new  column and row for the adjacency matrix to hold all edge weights'''
+        '''Adds a new column and row to the adjacency matrix at the next index'''
         self.partition_edges.append([0])
-
-        if len(self.partition_edges) > 1:
-            for column in self.partition_edges:
-                column.append(0)
+        print(len(self.partition))
+        
+        if len(self.partition) > 1:
+            for x in range(0,len(self.partition)):
+                self.partition_edges[x].append(0)
             
             
     def drop_community(self,community_id:int):
@@ -84,18 +95,27 @@ test2 = Node('Bath')
 test3 = Node('Nottingham')
 test_graph = Graph([test1,test2,test3])
 
+test_graph.add_community([test1])
+test_graph.visualise_edges('community')
+
+
 test_graph.alter_edge_weight([test1,test2],5)
 test_graph.alter_edge_weight([test1,test3],5)
 test_graph.alter_edge_weight([test2,test3],5)
 test_graph.alter_edge_weight([test2,test1],10)
-test_graph.visualise_edges()
+
+
+test_graph.visualise_edges('community')
+
 
 test_graph.add_community([test1])
+test_graph.partition
+
 test_graph.partition_edges
 test_graph.add_community([test2,test3])
 test_graph.add_community_edge(0,1)
 
 test_graph.partition
-test_graph.partition_edges
+test_graph.visualise_edges()
 test_graph.edges
 
