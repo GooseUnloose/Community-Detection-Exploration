@@ -87,7 +87,8 @@ class Graph:
                 y = self.get_Node_id(str(y))
                 sum_edges += self.edges[x][y]
                 
-        sum_edges
+        self.partition_edges[i][j] = sum_edges
+        self.partition_edges[j][i] = sum_edges
                 
         
 test1 = Node('Birmingham')
@@ -108,14 +109,13 @@ test_graph.alter_edge_weight([test2,test1],10)
 test_graph.visualise_edges('community')
 
 
-test_graph.add_community([test1])
 test_graph.partition
-
 test_graph.partition_edges
 test_graph.add_community([test2,test3])
 test_graph.add_community_edge(0,1)
 
 test_graph.partition
+test_graph.visualise_edges('community')
 test_graph.visualise_edges()
 test_graph.edges
 
