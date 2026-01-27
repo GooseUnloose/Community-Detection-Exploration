@@ -60,17 +60,24 @@ class Graph:
     def get_node_name(self,identifier:int):
         return self.vertices[identifier]
 
+    def get_node_partition(self,node):
+        for i in range(0,len(self.partition)):
+            if node in self.partition[i]:
+                return i
+
+
     def add_community(self,new_community:list[Node]):
         '''creates a community based off of a list of Nodes and ads this to the graph parition'''
         self.partition.append(new_community)
         
         '''Adds a new column and row to the adjacency matrix at the next index'''
         self.partition_edges.append([0])
-        print(len(self.partition))
+        
         
         if len(self.partition) > 1:
             for x in range(0,len(self.partition)):
-                self.partition_edges[x].append(0)
+                while len(self.partition_edges[x]) < len(self.partition):
+                    self.partition_edges[x].extend([0])
             
             
     def drop_community(self,community_id:int):
@@ -80,6 +87,12 @@ class Graph:
         self.partition_edges[community_id]
         for i in range(0,len(self.partition_edges)):
             self.partition_edges[i][community_id]
+        
+    def remove_node_from_community(self,node:Node,community:int):
+        self.partition[community].remove(node)
+
+    def add_node_to_community(self,node:Node,community:int):
+        self.partition[community].append(node)
         
     def add_community_edge(self,i:int,j:int):
         '''Add an edge between communties determined by the sum of all edges from nodes of each community going into one another'''
@@ -150,6 +163,57 @@ def modularity(graph:Graph,m:int = 0):
     return Q                    
 
 
+def louvain_intialise(graph:Graph)->Graph:
+    for node in graph.vertices:
+        graph.add_community([node])
+    
+    for i in range(0,len(graph.vertices)):
+        for j in range(0,len(graph.vertices)):
+            graph.add_community_edge(i,j)
+            None     
+    return graph
+
+def louvain(graph:Graph,initialise:bool = True):
+    '''Performs the Louvain algorithm for Community Detection of a graph
+    
+    -Function will keep looping until no greater improvement for modularity can be achieved
+    
+    -initialise is used to create a commmunity for each node in the graph, can be disabled to use a pre-existing partition
+    '''
+    
+    if initialise == True:
+        graph = louvain_intialise(graph)
+    
+    original_Q = modularity(graph)
+    current_Q = modularity(graph)
+
+    for i in range(0,len(graph.vertices)):
+        current_community = graph.get_node_partition(graph.vertices[i])
+        potential_Q = 0
+        max_j = 0
+        for j in range(0,len(graph.partition)):
+            if current_community != graph.partition[j]:
+                graph.remove_node_from_community(graph.vertices[i],current_community)
+                graph.add_node_to_community(graph.vertices[i],j)
+                
+                mod = modularity(graph)
+                
+                if mod > potential_Q:
+                    potential_Q = mod
+                    max_j = j
+                
+                graph.remove_node_from_community(graph.vertices[i],j)
+                graph.add_node_to_community(graph.vertices[i],current_community)
+        
+        if potential_Q > current_Q:
+            current_Q = potential_Q
+            graph.remove_node_from_community(graph.vertices[i],current_community)
+            graph.add_node_to_community(graph.vertices[i],max_j)
+            
+    return graph
+            
+                
+
     
     
 test1 = Node('Birmingham')
@@ -157,21 +221,31 @@ test2 = Node('Bath')
 test3 = Node('Nottingham')
 test_graph = Graph([test1,test2,test3])
 
-test_graph.add_community([test1])
 test_graph.alter_edge_weight([test1,test2],5)
 test_graph.alter_edge_weight([test1,test3],5)
 test_graph.alter_edge_weight([test2,test3],5)
 test_graph.alter_edge_weight([test2,test1],10)
 
+louvain_intialise(test_graph).partition  
+
+
+test_graph.add_community([test1])
 test_graph.add_community([test2,test3])
 test_graph.add_community_edge(0,1)
 
 new_test = convert_partition_to_graph(test_graph)
 
+test_graph.partition
+test_graph.remove_node_from_community(test1,0)
 
-test_graph.visualise_edges()
+test_graph.partition_edges
+test_graph.visualise_edges('community')
 test_graph.sum_node_edge_weights(test1)
 modularity(test_graph)
+
+
+
+louvain(test_graph).partition
 
 
 
