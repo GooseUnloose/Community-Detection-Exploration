@@ -189,53 +189,7 @@ def louvain_intialise(graph:Graph)->Graph:
         for j in range(0,len(graph.vertices)):
             graph.add_community_edge(i,j)   
     return graph
-
-def louvain(graph:Graph,initialise:bool = True):
-    '''Performs the Louvain algorithm for Community Detection of a graph
-    
-    -Function will keep looping until no greater improvement for modularity can be achieved
-    
-    -initialise is used to create a commmunity for each node in the graph, can be disabled to use a pre-existing partition
-    '''
-    
-    if initialise == True:
-        graph = louvain_intialise(graph)
-    
-    original_Q = modularity(graph)
-    current_Q = modularity(graph)
-
-    for i in range(0,len(graph.vertices)):
-        current_community = graph.get_node_partition(graph.vertices[i])
-        potential_Q = 0
-        max_j = 0
-        for j in range(0,len(graph.partition)):
-            if current_community != graph.partition[j]:
-                graph.remove_node_from_community(graph.vertices[i],current_community)
-                graph.add_node_to_community(graph.vertices[i],j)
-                
-                mod = modularity(graph)
-                
-                if mod > potential_Q:
-                    potential_Q = mod
-                    max_j = j
-                
-                graph.remove_node_from_community(graph.vertices[i],j)
-                graph.add_node_to_community(graph.vertices[i],current_community)
-        
-        if potential_Q > current_Q:
-            current_Q = potential_Q
-            graph.remove_node_from_community(graph.vertices[i],current_community)
-            graph.add_node_to_community(graph.vertices[i],max_j)
-            
-            if graph.partition[current_community] == []:
-                graph.drop_community(current_community)
-                graph.partition_edges.pop(current_community)
-                for i in graph.partition_edges:
-                    i.pop(current_community)
-        
-    return graph,current_Q
-
-                
+              
 def louvain1(graph:Graph,initialise:bool = True):
     
     if initialise == True:
@@ -244,6 +198,7 @@ def louvain1(graph:Graph,initialise:bool = True):
     initial_Q = modularity(graph)
     print(initial_Q)
     max_Q = initial_Q
+    swap = False
     for i in range(0,len(graph.vertices)): #for all nodes within the graph
         current_community = graph.get_node_partition(graph.vertices[i])
         potential_community = current_community
@@ -276,8 +231,6 @@ def louvain1(graph:Graph,initialise:bool = True):
             graph = partition_edge_reinitialise(graph) 
               
     print(max_Q)
-    if max_Q != initial_Q:
-        print('swap occured')
     return graph
     
 test1 = Node('Birmingham')
@@ -304,6 +257,7 @@ b = louvain1(b)
 b.partition
 
 c = Graph(b.partition,b.partition_edges)
+c.vertices
 c = louvain1(c)
 c.partition
 
