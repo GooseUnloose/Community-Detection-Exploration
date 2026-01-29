@@ -100,11 +100,13 @@ class Graph:
         com_j = self.partition[j]
         
         sum_edges = 0
-        for x in com_i:
-            x = self.get_Node_id(str(x))
-            for y in com_j:
-                y = self.get_Node_id(str(y))
-                sum_edges += self.edges[x][y]
+        
+        if com_i != com_j:
+            for x in com_i:
+                x = self.get_Node_id(str(x))
+                for y in com_j:
+                    y = self.get_Node_id(str(y))
+                    sum_edges += self.edges[x][y]
                 
         self.partition_edges[i][j] = sum_edges
         self.partition_edges[j][i] = sum_edges
@@ -151,7 +153,7 @@ def modularity(graph:Graph,m:int = 0):
         community_ids = [graph.get_Node_id(str(x)) for x in community]
         for i in community_ids:
             for j in range(0,len(graph.vertices)):
-                if j not in community_ids:
+                if j in community_ids:
                     Aij = graph.edges[i][j] + graph.edges[j][i]
                     Ki = graph.sum_node_edge_weights(str(graph.get_node_name(i)))
                     Kj = graph.sum_node_edge_weights(str(graph.get_node_name(j)))
@@ -163,12 +165,22 @@ def modularity(graph:Graph,m:int = 0):
     return Q                    
 
 
-def reinitialise(graph:Graph):
-    for i in range(0,len(graph.vertices)):
-        for j in range(0,len(graph.vertices)):
+def partition_edge_reinitialise(graph:Graph):
+    graph.partition_edges = [[0 for x in range(0,len(graph.partition))] for y in range(0,len(graph.partition))]
+    for i in range(0,len(graph.partition)):
+        for j in range(0,len(graph.partition)):
             graph.add_community_edge(i,j)    
     return graph
 
+def check_community_empty(graph:Graph,id:int):
+    '''Checks if a community is empty and removes it from the partition, returns the index for a replacement community'''
+    if graph.partition[id] == []:
+        graph.partition.pop(id)
+        return [True,len(graph.partition)] # returns the length of the partition as this will be the next free index
+    
+    else:
+        return [False,id]
+    
 def louvain_intialise(graph:Graph)->Graph:
     for node in graph.vertices:
         graph.add_community([node])
@@ -223,35 +235,77 @@ def louvain(graph:Graph,initialise:bool = True):
         
     return graph,current_Q
 
-        
                 
-
+def louvain1(graph:Graph,initialise:bool = True):
     
+    if initialise == True:
+        graph = louvain_intialise(graph)
+    
+    initial_Q = modularity(graph)
+    print(initial_Q)
+    max_Q = initial_Q
+    for i in range(0,len(graph.vertices)): #for all nodes within the graph
+        current_community = graph.get_node_partition(graph.vertices[i])
+        potential_community = current_community
+        
+        for j in range(0,len(graph.vertices)): #we use an adjacency matrix and graphs are expected to be complete so increment over all other neighbouts
+            if graph.edges[i][j] > 0 and graph.vertices[j] not in graph.partition[current_community]: 
+                
+                #current node i is,temporarily added to the community of node j and the partition edges are updated
+                temp_community = graph.get_node_partition(graph.vertices[j])
+                graph.remove_node_from_community(graph.vertices[i],current_community)
+                
+                graph.add_node_to_community(graph.vertices[i],temp_community)
+                graph = partition_edge_reinitialise(graph)
+
+                temp_Q = modularity(graph)
+                
+                # place current node i back into the original community, update edges again   
+                graph.add_node_to_community(graph.vertices[i],current_community)
+                graph.remove_node_from_community(graph.vertices[i],temp_community)
+                graph = partition_edge_reinitialise(graph)
+                
+                if temp_Q > max_Q:
+                    max_Q = temp_Q
+                    potential_community = temp_community
+                
+        if potential_community != current_community:
+            graph.remove_node_from_community(graph.vertices[i],current_community)
+        
+            graph.add_node_to_community(graph.vertices[i],potential_community)
+            graph = partition_edge_reinitialise(graph) 
+              
+    print(max_Q)
+    if max_Q != initial_Q:
+        print('swap occured')
+    return graph
     
 test1 = Node('Birmingham')
-test2 = Node('Bath')
+test2 = Node('Wolverhampton')
 test3 = Node('Nottingham')
-test4 = Node('Coleshill')
-test5 = Node('Lincon')
-test_graph = Graph([test1,test2,test3,test4,test5])
+test4 = Node('Leicester')
 
-test_graph.alter_edge_weight([test1,test2],5)
-test_graph.alter_edge_weight([test1,test3],5)
-test_graph.alter_edge_weight([test2,test3],5)
-test_graph.alter_edge_weight([test2,test1],10)
-test_graph.alter_edge_weight([test1,test4],100)
-test_graph.alter_edge_weight([test3,test5],250)
+test_graph = Graph([test1,test2,test3,test4])
 
-a = louvain(test_graph)
-a
-a[0].visualise_edges('community')
-a[0].visualise_edges()
-a[0].partition
-test_graph1 = Graph(a[0].partition,a[0].partition_edges)
+test_graph.alter_edge_weight([test1,test2],1/17)
+test_graph.alter_edge_weight([test1,test3],1/52)
+test_graph.alter_edge_weight([test1,test4],1/43)
+test_graph.alter_edge_weight([test2,test3],1/60)
+test_graph.alter_edge_weight([test2,test4],1/56)
+test_graph.alter_edge_weight([test4,test3],1/27)
 
-test_graph1.visualise_edges()
-b = louvain(test_graph1)
+test_graph.visualise_edges()
+a = louvain1(test_graph)
+a.partition
+a.visualise_edges()
+a.visualise_edges('community')
+b = Graph(a.partition,a.partition_edges)
+b = louvain1(b)
+b.partition
 
+c = Graph(b.partition,b.partition_edges)
+c = louvain1(c)
+c.partition
 
 
 
