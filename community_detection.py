@@ -225,41 +225,12 @@ def louvain1(graph:Graph,initialise:bool = True):
                     potential_community = temp_community
                 
         if potential_community != current_community:
+            
+            print(f'{max_Q}, Hence swapped {graph.vertices[i]} from: {graph.partition[current_community]} \nto: {graph.partition[potential_community]}')
+            
             graph.remove_node_from_community(graph.vertices[i],current_community)
         
             graph.add_node_to_community(graph.vertices[i],potential_community)
             graph = partition_edge_reinitialise(graph) 
               
-    print(max_Q)
     return graph
-    
-test1 = Node('Birmingham')
-test2 = Node('Wolverhampton')
-test3 = Node('Nottingham')
-test4 = Node('Leicester')
-
-test_graph = Graph([test1,test2,test3,test4])
-
-test_graph.alter_edge_weight([test1,test2],1/17)
-test_graph.alter_edge_weight([test1,test3],1/52)
-test_graph.alter_edge_weight([test1,test4],1/43)
-test_graph.alter_edge_weight([test2,test3],1/60)
-test_graph.alter_edge_weight([test2,test4],1/56)
-test_graph.alter_edge_weight([test4,test3],1/27)
-
-test_graph.visualise_edges()
-a = louvain1(test_graph)
-a.partition
-a.visualise_edges()
-a.visualise_edges('community')
-b = Graph(a.partition,a.partition_edges)
-b = louvain1(b)
-b.partition
-
-c = Graph(b.partition,b.partition_edges)
-c.vertices
-c = louvain1(c)
-c.partition
-
-
-
