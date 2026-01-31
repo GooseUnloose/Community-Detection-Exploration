@@ -1,3 +1,5 @@
+import math
+
 class Node:
     '''Nodes as an object contain their unique identifer and their density representative of how many addresses reside within the Node'''
     def __init__(self,indentifier, density=0):
@@ -19,6 +21,8 @@ class Graph:
         self.partition = []
         self.partition_edges = [[0 for i in range(0,len(self.partition))] for j in range(0,len(self.partition))]
         
+        self.cutoff_weight = math.inf
+        
         
     def visualise_edges(self,edge='vertices'):
         match edge:
@@ -34,13 +38,19 @@ class Graph:
         for i in range(0,len(edge_list)):
             print(edge_list[i])
         
+        
     def alter_edge_weight(self,nodes:list[Node],weight:int):
         '''Appends the edge weight between nodes, as the graph isnt directed it is mirrored across the matrix'''
         i = self.get_Node_id(str(nodes[0]))
         j = self.get_Node_id(str(nodes[1]))
+        
+        if weight >= self.cutoff_weight:
+            weight = 0
+            
         self.edges[i][j] = weight
         self.edges[j][i] = weight
-        
+            
+         
     def drop_node(self,node:Node):
         
         node_id = self.get_Node_id(str(node))
@@ -51,14 +61,17 @@ class Graph:
         for i in range(0,len(self.vertices)):
             self.edges[i].pop(node_id)
         
+        
     def get_Node_id(self,identifier:str):
         '''Returns the index of the column/row the Node resides on'''
         for i in range(0,len(self.vertices)):
             if str(self.vertices[i]) == identifier:
                 return i
 
+
     def get_node_name(self,identifier:int):
         return self.vertices[identifier]
+
 
     def get_node_partition(self,node):
         for i in range(0,len(self.partition)):
@@ -88,11 +101,14 @@ class Graph:
         for i in range(0,len(self.partition_edges)):
             self.partition_edges[i][community_id]
         
+        
     def remove_node_from_community(self,node:Node,community:int):
         self.partition[community].remove(node)
 
+
     def add_node_to_community(self,node:Node,community:int):
         self.partition[community].append(node)
+        
         
     def add_community_edge(self,i:int,j:int):
         '''Add an edge between communties determined by the sum of all edges from nodes of each community going into one another'''
@@ -121,7 +137,11 @@ class Graph:
         for i in range(0,len(self.edges)):
             sum += self.edges[node_id][i]
             sum += self.edges[i][node_id]
-        return sum        
+        return sum
+        
+    
+    def set_weight_cutoff(self,cutoff_weight):
+        self.cutoff_weight = cutoff_weight
         
 def convert_partition_to_graph(graph:Graph):
     '''Returns a graph based on the partitions and partition edge weights of the input graph
@@ -133,8 +153,6 @@ def convert_partition_to_graph(graph:Graph):
     return Graph(node_list,graph.partition_edges)
     
     
-
-
 def modularity(graph:Graph,m:int = 0):
     '''returns the modularity score of a graph's current state
     
@@ -172,6 +190,7 @@ def partition_edge_reinitialise(graph:Graph):
             graph.add_community_edge(i,j)    
     return graph
 
+
 def check_community_empty(graph:Graph,id:int):
     '''Checks if a community is empty and removes it from the partition, returns the index for a replacement community'''
     if graph.partition[id] == []:
@@ -180,6 +199,7 @@ def check_community_empty(graph:Graph,id:int):
     
     else:
         return [False,id]
+    
     
 def louvain_intialise(graph:Graph)->Graph:
     for node in graph.vertices:
@@ -190,7 +210,8 @@ def louvain_intialise(graph:Graph)->Graph:
             graph.add_community_edge(i,j)   
     return graph
               
-def louvain1(graph:Graph,initialise:bool = True):
+              
+def louvain(graph:Graph,initialise:bool = True):
     
     if initialise == True:
         graph = louvain_intialise(graph)
