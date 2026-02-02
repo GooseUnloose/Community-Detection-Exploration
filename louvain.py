@@ -1,5 +1,32 @@
 from community_detection import *
+from fetch_data import *
 import argparse
+import json
+
+
+def main():
+    cities_dict = load_graph_data()
+    input_cities = args.cities_list
+    
+    city_nodes = [Node(input_cities[x]) for x in range(0,len(input_cities))]
+    
+    graph = Graph(city_nodes)
+    graph.set_weight_cutoff(5400)
+    
+    for i in range(0,len(input_cities)):
+        for j in range(0,len(input_cities)):
+            graph.alter_edge_weight([input_cities[i],input_cities[j]],(get_city_distances(input_cities[i],input_cities[j],cities_dict)))
+
+
+    output = louvain(graph)
+    #output1 = Graph(output.partition,output.partition_edges)
+    #output1 = louvain(output1)
+    
+    print(output.partition)
+    print(output.visualise_edges('community'))
+
+    #with open('louvain_output.txt','x') as file :
+        #file.write(str(louvain(graph).partition))
 
 
 if __name__ == '__main__':
@@ -12,5 +39,4 @@ if __name__ == '__main__':
     parser.add_argument('--cities-list', required= True, type= str, nargs='+')
     parser.add_argument('--distance-cutoff ',required= False, type= int)
     args = parser.parse_args()
-
-    print(args._get_kwargs())
+    main()

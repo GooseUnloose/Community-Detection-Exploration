@@ -217,9 +217,7 @@ def louvain(graph:Graph,initialise:bool = True):
         graph = louvain_intialise(graph)
     
     initial_Q = modularity(graph)
-    print(initial_Q)
     max_Q = initial_Q
-    swap = False
     for i in range(0,len(graph.vertices)): #for all nodes within the graph
         current_community = graph.get_node_partition(graph.vertices[i])
         potential_community = current_community
@@ -254,4 +252,5 @@ def louvain(graph:Graph,initialise:bool = True):
             graph.add_node_to_community(graph.vertices[i],potential_community)
             graph = partition_edge_reinitialise(graph) 
               
+
     return graph
