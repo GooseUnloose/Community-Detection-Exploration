@@ -2,9 +2,10 @@ import math
 
 class Node:
     '''Nodes as an object contain their unique identifer and their density representative of how many addresses reside within the Node'''
-    def __init__(self,indentifier, density=0):
+    def __init__(self,indentifier,hyper_node = [], density=0):
         self.identifier = indentifier
         self.density = density
+        self.hyper_node = hyper_node
         
     def __repr__(self):
         return self.identifier
@@ -143,6 +144,25 @@ class Graph:
     def set_weight_cutoff(self,cutoff_weight):
         self.cutoff_weight = cutoff_weight
         
+        
+    def drop_community_edges(self,id:int):
+        
+        for i in range(0,len(self.partition_edges)):
+            self.partition_edges[i].pop(id)
+        
+        self.partition_edges.pop(id)
+        
+    
+    def drop_empty_communities(self):
+        '''drops empty communities from the partition and removes edges from those communities'''
+
+        for i in range(len(self.partition) - 1, -1, -1):
+            
+            if self.partition[i] == []:
+                self.drop_community(i)
+                self.drop_community_edges(i)
+                    
+            
 def convert_partition_to_graph(graph:Graph):
     '''Returns a graph based on the partitions and partition edge weights of the input graph
     
@@ -164,8 +184,12 @@ def modularity(graph:Graph,m:int = 0):
         for i in range(0,len(graph.edges)):
             for j in range(0,len(graph.edges)):
                 m += graph.edges[i][j]
-                
+    
+    
     Q = 0
+    
+    if m == 0:
+        return Q
                 
     for community in graph.partition:
         community_ids = [graph.get_Node_id(str(x)) for x in community]
@@ -245,7 +269,7 @@ def louvain(graph:Graph,initialise:bool = True):
                 
         if potential_community != current_community:
             
-            print(f'{max_Q}, Hence swapped {graph.vertices[i]} from: {graph.partition[current_community]} \nto: {graph.partition[potential_community]}')
+            #print(f'{max_Q}, Hence swapped {graph.vertices[i]} from: {graph.partition[current_community]} \nto: {graph.partition[potential_community]}')
             
             graph.remove_node_from_community(graph.vertices[i],current_community)
         
@@ -254,3 +278,22 @@ def louvain(graph:Graph,initialise:bool = True):
               
 
     return graph
+
+
+def get_community_hypernodes(partition: list[Node]):
+    '''returns a cleaned up list of nodes based on a graph partition'''
+    
+    node_list = []
+    for i in range(0,len(partition)):
+        if partition[i] != []:
+            partition_data = []
+            for node in partition[i]:
+                if node.hyper_node != []:
+                    partition_data.append[node.hyper_node]
+                else:
+                    partition_data.append(node)
+                    
+            node_list.append(Node(f'community {i}',partition_data))
+            
+    return node_list
+        

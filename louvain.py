@@ -1,7 +1,6 @@
 from community_detection import *
 from fetch_data import *
 import argparse
-import json
 
 
 def main():
@@ -11,7 +10,7 @@ def main():
     city_nodes = [Node(input_cities[x]) for x in range(0,len(input_cities))]
     
     graph = Graph(city_nodes)
-    graph.set_weight_cutoff(5400)
+    graph.set_weight_cutoff(3600)
     
     for i in range(0,len(input_cities)):
         for j in range(0,len(input_cities)):
@@ -19,15 +18,14 @@ def main():
 
 
     output = louvain(graph)
-    #output1 = Graph(output.partition,output.partition_edges)
-    #output1 = louvain(output1)
-    
+
+    output.drop_empty_communities()
+
     print(output.partition)
     print(output.visualise_edges('community'))
-
-    #with open('louvain_output.txt','x') as file :
-        #file.write(str(louvain(graph).partition))
-
+    
+    print(get_community_hypernodes(output.partition))
+    
 
 if __name__ == '__main__':
     
