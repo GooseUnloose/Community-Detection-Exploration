@@ -1,5 +1,5 @@
-from community_detection import *
-from fetch_data import *
+from community_detection.community_detection import *
+from community_detection.fetch_data import *
 import argparse
 
 
