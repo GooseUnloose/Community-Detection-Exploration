@@ -1,4 +1,12 @@
-from flask import Flask, render_template
+import sys,json
+
+sys.path.append('../../Community-Detection-Exploration')
+
+from flask import Flask, render_template,request
+
+from community_detection.community_detection import *
+from community_detection.fetch_data import *
+
 app = Flask(__name__)
 
 @app.route('/')
@@ -6,3 +14,28 @@ def home():
    return render_template('index.html')
 if __name__ == '__main__':
    app.run()
+   
+@app.route('/louvain')
+def run_louvain():
+   input_cities = request.args.get('cities_list').split(',')
+   cities_dict = load_graph_data()
+   
+   city_nodes = [Node(input_cities[x]) for x in range(0,len(input_cities))]
+   
+   graph = Graph(city_nodes)
+   graph.set_weight_cutoff(3600)
+    
+   for i in range(0,len(input_cities)):
+      for j in range(0,len(input_cities)):
+         graph.alter_edge_weight([input_cities[i],input_cities[j]],(get_city_distances(input_cities[i],input_cities[j],cities_dict)))
+
+
+   output = louvain(graph)
+
+   output.drop_empty_communities()
+   
+   #return json of communities
+   partition_dict = {x: [str(y) for y in output.partition[x]] for x in range(0,len(output.partition))}
+   
+   rtn_partition = json.dumps(partition_dict)
+   return rtn_partition

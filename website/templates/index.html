@@ -1,11 +1,20 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flask Tutorial</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Neat Nav</title>
 </head>
 <body>
-<h1>This is the Index page</h1>
+    <h1>Neat Nav</h1>
+
+    <input type="text",name = 'city_input', id="city_input", placeholder = "Enter UK cities and press enter">
+    <button type="submit" name="submit" id="button">submit</button>
+
+    <div id = 'community_output'></div>
+
+    <div id = 'test'></div>
+    <script src="../static/script.js"></script>
 </body>
-</html> 
+</html>
