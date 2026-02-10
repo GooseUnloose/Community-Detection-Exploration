@@ -19,16 +19,42 @@ function input_sanitiser(input_str){
     return rtn_list;
 }
 
+
+function remove_from_city_list(item){
+    for (i = 0; i< city_list.length; i++){
+        if (`div_${city_list[i]}` == item){
+            city_list.splice(i,1);
+        }
+    }
+}
+
+
 function log_city_list (){
     let sanitised_lst = input_sanitiser(document.getElementById('city_input').value);
+
+    const output_div = document.getElementById('community_output');
 
     for (i = 0; i < sanitised_lst.length;i++){
         if(city_list.indexOf(sanitised_lst[i]) == -1){
             city_list.push(sanitised_lst[i]);
+
+            const new_div = document.createElement('div')
+            new_div.id = `div_${sanitised_lst[i]}`;
+            new_div.className = 'input_city';
+            new_div.innerHTML = sanitised_lst[i];
+
+            new_div.addEventListener('click',function (ev) {
+                document.getElementById(new_div.id).remove();
+
+                //removes the element from the city list too
+                remove_from_city_list(new_div.id);
+                console.log(city_list);
+            })
+
+
+            output_div.appendChild(new_div);
         }
     }
-
-    document.getElementById('community_output').innerHTML = city_list;
 };
 
 
@@ -124,6 +150,12 @@ function create_response_table(JSON_response,key){
 }
 
 
+var map = L.map('map_div').setView([51.505, -0.09], 13);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+}).addTo(map);
+
 document.getElementById('city_input').addEventListener('keyup',function (event){
     // if event is the enter key, add current value to the city_array 
     if (event.code === 'Enter'){
@@ -135,19 +167,16 @@ document.getElementById('city_input').addEventListener('keyup',function (event){
 document.getElementById('button').addEventListener('click',function (){
     const request = new XMLHttpRequest();
 
+    request.open('GET',`/louvain?cities_list=${city_list}`);
+    request.send();
+
     request.onload = function() {
         return_response = JSON.parse(request.responseText);
 
         let div_insert = document.getElementById('test');
+
+        div_insert.innerHTML = '';
         div_insert = create_community_div(return_response);
         //div_insert.appendChild(create_community_div(return_response));
     }
-
-    request.open('GET',`/louvain?cities_list=${city_list}`);
-    request.send();
-})
-
-document.getElementsByClassName('community_delete').addEventListener('click', function (event){
-    const home_div = event.target.closest("div");
-    console.log(String(home_div));
 })
