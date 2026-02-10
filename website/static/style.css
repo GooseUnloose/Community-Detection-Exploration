@@ -30,6 +30,7 @@ form{
     float: left;
     border: solid 2px #dcdde1;
     border-radius: 5px;
+    text-align: center;
 }
 
 th{
@@ -37,4 +38,11 @@ th{
 }
 table{
     text-align: center;
+}
+
+.community_delete{
+    width: 15px;
+    height: 15px;
+    background-color: yellow;
+    border-radius: 5px;
 }
