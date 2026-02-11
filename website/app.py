@@ -18,6 +18,10 @@ if __name__ == '__main__':
 @app.route('/louvain')
 def run_louvain():
    input_cities = request.args.get('cities_list').split(',')
+   
+   with open("../data/city_graph.json", 'r') as file:
+        cities_dict = json.load(file)
+        
    cities_dict = load_graph_data()
    
    city_nodes = [Node(input_cities[x]) for x in range(0,len(input_cities))]
