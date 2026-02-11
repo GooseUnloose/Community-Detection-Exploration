@@ -1,10 +1,13 @@
+
 from community_detection.community_detection import *
 from community_detection.fetch_data import *
 import argparse
 
-
 def main():
-    cities_dict = load_graph_data()
+    
+    with open("data/city_graph.json", 'r') as file:
+        cities_dict = json.load(file)
+    
     input_cities = args.cities_list
     
     city_nodes = [Node(input_cities[x]) for x in range(0,len(input_cities))]
@@ -22,13 +25,12 @@ def main():
     output.drop_empty_communities()
 
     print(output.partition)
-    print(output.visualise_edges('community'))
+    #print(output.visualise_edges('community'))
     
-    print(get_community_hypernodes(output.partition))
+    #print(get_community_hypernodes(output.partition))
     
 
 if __name__ == '__main__':
-    
     
     parser = argparse.ArgumentParser(
         description='Script for performing Louvain Community Detection on a complete graph'

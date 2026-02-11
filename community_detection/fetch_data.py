@@ -1,8 +1,8 @@
-import json
+import json,os
 
 
 def load_graph_data():
-    with open('../data/city_graph.json', 'r') as file:
+    with open("../data/city_graph.json", 'r') as file:
         cities_dict = json.load(file)
     
     return cities_dict
