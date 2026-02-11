@@ -2,7 +2,6 @@ body{
     background-color: #F8FAFC;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     color: #1A253D;
-    
 }
 
 .flex_container{
@@ -19,6 +18,8 @@ body{
     flex-direction: column;
     width: 45%;
     height: 100%;
+    padding-right: 50px;
+    padding-left: 50px;
 }
 form{
     position: relative;
@@ -31,30 +32,44 @@ form{
 }
 
 #city_input{
+
+    font-size: 18px;
+
     width: 100%;
     height: 100%;
 }
 
 #button{
     width: 33%;
+
 }
 
 #community_output{
     display: flex;
+    width: 100%;
+    height: 325px;
+
+    padding-top: 15px;
+
     flex-direction: row;
     flex-wrap: wrap;
 }
 
 .input_city{
     background-color: #FFFFFF;
+
+    height: fit-content;
+
+    font-size: 18px;
+
+    border: solid 2px #1A253D;
+    border-radius: 5px;
+
     width: fit-content;
     padding: 5px;
     margin-left: 5px;
     margin-right: 5px;
 }
-
-
-
 
 #clickable{
     width: 100px;
@@ -93,9 +108,11 @@ table{
 }
 
 #map_div{
-    width: 50%;
+    width: 45%;
     height: 450px;
     
+    padding-right: 50px;
+
     border-radius: 5px;
 
     background-color: red;
@@ -106,11 +123,18 @@ table{
     padding-top: 2%;
     justify-content: center;
 
+    height: 205px;
+
     display: flex;
     flex-direction: row;
     align-items: center;
+}
 
+#how_to_div{
+    text-align: center;
+}
 
-
-
+ul
+{
+    list-style-type: none;
 }
