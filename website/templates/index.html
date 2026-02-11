@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="crossorigin=""/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Neat Nav</title>
+</head>
+
+<body>
+    <h1>Neat Nav</h1>
+    <div class = "flex_container">
+
+        <div id = "input_container">
+            <p>Group cities into meaningful communities</p>
+            <input type="text",name = 'city_input', id="city_input", placeholder = "Enter UK cities and press enter">
+            <div id = 'community_output'></div>
+            <button type="submit" name="submit" id="button">submit</button>
+        </div>
+        <div id = "map_div">testdata</div>
+    </div>
+    <div id = 'test'></div>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="crossorigin=""></script>
+    <script src="../static/script.js"></script>
+</body>
+</html>
