@@ -72,13 +72,33 @@ function create_community_div(JSON_response){
 
         const delete_button = document.createElement('button');
         delete_button.className = 'community_delete';
-        com_div.appendChild(delete_button);
+        delete_button.id = `button_${element}`;
 
+        com_div.appendChild(delete_button);
         house_div.appendChild(com_div);
+
+        document.getElementById(`button_${element}`).addEventListener('click', function(ev){
+            const container_div = ev.target.closest('.community_div');
+
+            //remove the elements within the table from the maptile
+
+            container_div.remove();
+        })
     });
 
     return house_div;
 }
+
+function append_city_pointers(JSON_response){
+    const keys = Object.keys(JSON_response);
+    
+    keys.forEach(element => {
+        L.marker([JSON_response[element]['lat'],JSON_response[element]['lon'] ]).addTo(markers);
+    })
+
+
+}
+
 
 
 function drag_start_handler(ev){
@@ -156,10 +176,13 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map);
 
+var markers = L.layerGroup().addTo(map);
+
 document.getElementById('city_input').addEventListener('keyup',function (event){
     // if event is the enter key, add current value to the city_array 
     if (event.code === 'Enter'){
         log_city_list();
+        event.target.value = '';
     }
 })
 
@@ -176,7 +199,12 @@ document.getElementById('button').addEventListener('click',function (){
         let div_insert = document.getElementById('test');
 
         div_insert.innerHTML = '';
-        div_insert = create_community_div(return_response);
-        //div_insert.appendChild(create_community_div(return_response));
+        div_insert = create_community_div(return_response['graph']);
+        
+        //generates pointers on maptile
+        markers.clearLayers();
+        append_city_pointers(return_response['coordinates']);
+
+
     }
 })
