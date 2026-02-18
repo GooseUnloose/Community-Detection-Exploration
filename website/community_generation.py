@@ -1,30 +1,32 @@
 import sys,json,pandas
 
-sys.path.append('../../Community-Detection-Exploration')
+#sys.path.append('../../Community-Detection-Exploration')
 
-from flask import Flask, render_template,request
+from flask import render_template,request,Blueprint
 
 from community_detection.community_detection import *
 from community_detection.fetch_data import *
 
-app = Flask(__name__)
 
-@app.route('/')
+bp = Blueprint('community_generation',__name__)
+
+
+@bp.route('/')
 def home():
    return render_template('index.html')
-if __name__ == '__main__':
-   app.run()
+
+
    
-@app.route('/louvain')
+@bp.route('/louvain')
 def run_louvain():
    input_cities = request.args.get('cities_list').split(',')
    
-   with open("../data/city_graph.json", 'r') as file:
+   with open("data/city_graph.json", 'r') as file:
         cities_dict = json.load(file)
         
    cities_dict = load_graph_data()
    
-   coordinate_df = pandas.read_csv('../data/area_locations.csv')
+   coordinate_df = pandas.read_csv('data/area_locations.csv')
    
    
    
