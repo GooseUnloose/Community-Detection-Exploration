@@ -6,7 +6,7 @@ let return_response;
 function input_sanitiser(input_str){
     //removes all non characters from input_str and returns a list of these separated values
 
-    let parsed_str = input_str.replace(/[^a-zA-Z\s]/g,'');
+    let parsed_str = input_str.replace(/[^a-zA-Z\s-]/g,'');
     let rtn_list = parsed_str.split(" ");
     
     for (let i = 0; i < rtn_list.length;i++){
@@ -14,6 +14,10 @@ function input_sanitiser(input_str){
             rtn_list.splice(i,1);
             i = -1;
         }
+        else{
+           rtn_list[i] = rtn_list[i].replace(/-/g," ");
+        }
+        console.log(rtn_list[i]);
     }
 
     return rtn_list;
