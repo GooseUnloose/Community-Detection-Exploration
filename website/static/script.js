@@ -1,13 +1,13 @@
 
-const help_list = ['Aberdeen', 'St Albans', 'Birmingham', 'Bath', 'Blackburn','Bradford', 'British Forces', 'Bournemouth', 'Bolton', 'Brighton',
-       'Bromley', 'Bristol', 'Northern Ireland', 'Carlisle', 'Cambridge','Cardiff', 'Chester', 'Chelmsford', 'Colchester', 'Croydon','Canterbury', 'Coventry', 'Crewe', 'Dartford', 'Dundee', 'Derby',
-       'Dumfries and Galloway', 'Durham', 'Darlington', 'Doncaster','Dorchester', 'Dudley', 'East London', 'Central London','Edinburgh', 'Enfield', 'Exeter', 'Falkirk and Stirling',
-       'Blackpool', 'Glasgow', 'Gloucester', 'Guildford', 'Harrow','Huddersfield', 'Harrogate', 'Hemel Hempstead', 'Hereford','Outer Hebrides', 'Hull', 'Halifax', 'Ilford', 'Ipswich',
-       'Inverness', 'Kilmarnock', 'Kingston upon Thames', 'Kirkwall','Kirkcaldy', 'Liverpool', 'Lancaster', 'Llandrindod Wells','Leicester', 'Llandudno', 'Lincoln', 'Leeds', 'Luton',
-       'Manchester', 'Rochester', 'Milton Keynes', 'Motherwell','North London', 'Newcastle upon Tyne', 'Nottingham', 'Northampton','Newport', 'Norwich', 'North West London', 'Oldham', 'Oxford',
-       'Paisley', 'Peterborough', 'Perth', 'Plymouth', 'Portsmouth','Preston', 'Reading', 'Redhill', 'Romford', 'Sheffield', 'Swansea','South East London', 'Stevenage', 'Stockport', 'Slough', 'Sutton',
-       'Swindon', 'Southampton', 'Salisbury', 'Sunderland','Southend-on-Sea', 'Stoke-on-Trent', 'South West London','Shrewsbury', 'Taunton', 'Galashiels', 'Telford', 'Tonbridge',
-       'Torquay', 'Truro', 'Cleveland', 'Twickenham', 'Southall','West London', 'Warrington', 'Central London', 'Watford','Wakefield', 'Wigan', 'Worcester', 'Walsall', 'Wolverhampton','York', 'Lerwick']
+const help_list = ['Aberdeen', 'St-Albans', 'Birmingham', 'Bath', 'Blackburn','Bradford', 'British-Forces', 'Bournemouth', 'Bolton', 'Brighton',
+       'Bromley', 'Bristol', 'Northern-Ireland', 'Carlisle', 'Cambridge','Cardiff', 'Chester', 'Chelmsford', 'Colchester', 'Croydon','Canterbury', 'Coventry', 'Crewe', 'Dartford', 'Dundee', 'Derby',
+       'Dumfries-and-Galloway', 'Durham', 'Darlington', 'Doncaster','Dorchester', 'Dudley', 'East-London', 'Central-London','Edinburgh', 'Enfield', 'Exeter', 'Falkirk-and-Stirling',
+       'Blackpool', 'Glasgow', 'Gloucester', 'Guildford', 'Harrow','Huddersfield', 'Harrogate', 'Hemel-Hempstead', 'Hereford','OuterHebrides', 'Hull', 'Halifax', 'Ilford', 'Ipswich',
+       'Inverness', 'Kilmarnock', 'Kingston-upon-Thames', 'Kirkwall','Kirkcaldy', 'Liverpool', 'Lancaster', 'Llandrindod-Wells','Leicester', 'Llandudno', 'Lincoln', 'Leeds', 'Luton',
+       'Manchester', 'Rochester', 'Milton-Keynes', 'Motherwell','North-London', 'Newcastle-upon-Tyne', 'Nottingham', 'Northampton','Newport', 'Norwich', 'North-West-London', 'Oldham', 'Oxford',
+       'Paisley', 'Peterborough', 'Perth', 'Plymouth', 'Portsmouth','Preston', 'Reading', 'Redhill', 'Romford', 'Sheffield', 'Swansea','South-East-London', 'Stevenage', 'Stockport', 'Slough', 'Sutton',
+       'Swindon', 'Southampton', 'Salisbury', 'Sunderland','Southend-on-Sea', 'Stoke-on-Trent', 'South-West-London','Shrewsbury', 'Taunton', 'Galashiels', 'Telford', 'Tonbridge',
+       'Torquay', 'Truro', 'Cleveland', 'Twickenham', 'Southall','West-London', 'Warrington', 'Central-London', 'Watford','Wakefield', 'Wigan', 'Worcester', 'Walsall', 'Wolverhampton','York', 'Lerwick']
 
 const city_list = [];
 let return_response;
@@ -246,8 +246,10 @@ document.getElementById('help_button').addEventListener('click',function (event)
 
     popup_div.addEventListener('click',function (){
         popup_div.remove();
+        overlay_container.style.display = "none";
     })
 
     overlay_container.appendChild(popup_div);
+    overlay_container.style.display = "inline";
 
 })
