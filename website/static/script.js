@@ -1,4 +1,14 @@
 
+const help_list = ['Aberdeen', 'St Albans', 'Birmingham', 'Bath', 'Blackburn','Bradford', 'British Forces', 'Bournemouth', 'Bolton', 'Brighton',
+       'Bromley', 'Bristol', 'Northern Ireland', 'Carlisle', 'Cambridge','Cardiff', 'Chester', 'Chelmsford', 'Colchester', 'Croydon','Canterbury', 'Coventry', 'Crewe', 'Dartford', 'Dundee', 'Derby',
+       'Dumfries and Galloway', 'Durham', 'Darlington', 'Doncaster','Dorchester', 'Dudley', 'East London', 'Central London','Edinburgh', 'Enfield', 'Exeter', 'Falkirk and Stirling',
+       'Blackpool', 'Glasgow', 'Gloucester', 'Guildford', 'Harrow','Huddersfield', 'Harrogate', 'Hemel Hempstead', 'Hereford','Outer Hebrides', 'Hull', 'Halifax', 'Ilford', 'Ipswich',
+       'Inverness', 'Kilmarnock', 'Kingston upon Thames', 'Kirkwall','Kirkcaldy', 'Liverpool', 'Lancaster', 'Llandrindod Wells','Leicester', 'Llandudno', 'Lincoln', 'Leeds', 'Luton',
+       'Manchester', 'Rochester', 'Milton Keynes', 'Motherwell','North London', 'Newcastle upon Tyne', 'Nottingham', 'Northampton','Newport', 'Norwich', 'North West London', 'Oldham', 'Oxford',
+       'Paisley', 'Peterborough', 'Perth', 'Plymouth', 'Portsmouth','Preston', 'Reading', 'Redhill', 'Romford', 'Sheffield', 'Swansea','South East London', 'Stevenage', 'Stockport', 'Slough', 'Sutton',
+       'Swindon', 'Southampton', 'Salisbury', 'Sunderland','Southend-on-Sea', 'Stoke-on-Trent', 'South West London','Shrewsbury', 'Taunton', 'Galashiels', 'Telford', 'Tonbridge',
+       'Torquay', 'Truro', 'Cleveland', 'Twickenham', 'Southall','West London', 'Warrington', 'Central London', 'Watford','Wakefield', 'Wigan', 'Worcester', 'Walsall', 'Wolverhampton','York', 'Lerwick']
+
 const city_list = [];
 let return_response;
 
@@ -85,7 +95,7 @@ function create_community_div(JSON_response){
             const container_div = ev.target.closest('.community_div');
 
             //remove the elements within the table from the maptile
-
+            
             container_div.remove();
         })
     });
@@ -102,7 +112,6 @@ function append_city_pointers(JSON_response){
 
 
 }
-
 
 
 function drag_start_handler(ev){
@@ -174,7 +183,7 @@ function create_response_table(JSON_response,key){
 }
 
 
-var map = L.map('map_div').setView([51.505, -0.09], 13);
+var map = L.map('map_div').setView([52.636182, -1.133126], 7);
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -211,4 +220,34 @@ document.getElementById('button').addEventListener('click',function (){
 
 
     }
+})
+
+document.getElementById('help_button').addEventListener('click',function (event){
+    const overlay_container = document.getElementById('help_overlay');
+
+    const popup_div = document.createElement('div');
+
+    const popup_p = document.createElement('p');
+    popup_p.textContent = "Neat Nav utilises unique post codes for grouping. The locations avaliable are below:"
+    popup_div.appendChild(popup_p);
+
+    const popup_table = document.createElement('table');
+    
+    help_list.forEach(element => {
+        const new_row = document.createElement('tr');
+        const new_data = document.createElement('td');
+        new_data.textContent = element;
+    
+        new_row.appendChild(new_data);
+        popup_table.appendChild(new_row);
+    });
+
+    popup_div.appendChild(popup_table);
+
+    popup_div.addEventListener('click',function (){
+        popup_div.remove();
+    })
+
+    overlay_container.appendChild(popup_div);
+
 })
