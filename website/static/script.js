@@ -1,4 +1,14 @@
 
+const help_list = ['Aberdeen', 'St-Albans', 'Birmingham', 'Bath', 'Blackburn','Bradford', 'British-Forces', 'Bournemouth', 'Bolton', 'Brighton',
+       'Bromley', 'Bristol', 'Northern-Ireland', 'Carlisle', 'Cambridge','Cardiff', 'Chester', 'Chelmsford', 'Colchester', 'Croydon','Canterbury', 'Coventry', 'Crewe', 'Dartford', 'Dundee', 'Derby',
+       'Dumfries-and-Galloway', 'Durham', 'Darlington', 'Doncaster','Dorchester', 'Dudley', 'East-London', 'Central-London','Edinburgh', 'Enfield', 'Exeter', 'Falkirk-and-Stirling',
+       'Blackpool', 'Glasgow', 'Gloucester', 'Guildford', 'Harrow','Huddersfield', 'Harrogate', 'Hemel-Hempstead', 'Hereford','OuterHebrides', 'Hull', 'Halifax', 'Ilford', 'Ipswich',
+       'Inverness', 'Kilmarnock', 'Kingston-upon-Thames', 'Kirkwall','Kirkcaldy', 'Liverpool', 'Lancaster', 'Llandrindod-Wells','Leicester', 'Llandudno', 'Lincoln', 'Leeds', 'Luton',
+       'Manchester', 'Rochester', 'Milton-Keynes', 'Motherwell','North-London', 'Newcastle-upon-Tyne', 'Nottingham', 'Northampton','Newport', 'Norwich', 'North-West-London', 'Oldham', 'Oxford',
+       'Paisley', 'Peterborough', 'Perth', 'Plymouth', 'Portsmouth','Preston', 'Reading', 'Redhill', 'Romford', 'Sheffield', 'Swansea','South-East-London', 'Stevenage', 'Stockport', 'Slough', 'Sutton',
+       'Swindon', 'Southampton', 'Salisbury', 'Sunderland','Southend-on-Sea', 'Stoke-on-Trent', 'South-West-London','Shrewsbury', 'Taunton', 'Galashiels', 'Telford', 'Tonbridge',
+       'Torquay', 'Truro', 'Cleveland', 'Twickenham', 'Southall','West-London', 'Warrington', 'Central-London', 'Watford','Wakefield', 'Wigan', 'Worcester', 'Walsall', 'Wolverhampton','York', 'Lerwick']
+
 const city_list = [];
 let return_response;
 
@@ -6,7 +16,7 @@ let return_response;
 function input_sanitiser(input_str){
     //removes all non characters from input_str and returns a list of these separated values
 
-    let parsed_str = input_str.replace(/[^a-zA-Z\s]/g,'');
+    let parsed_str = input_str.replace(/[^a-zA-Z\s-]/g,'');
     let rtn_list = parsed_str.split(" ");
     
     for (let i = 0; i < rtn_list.length;i++){
@@ -14,6 +24,10 @@ function input_sanitiser(input_str){
             rtn_list.splice(i,1);
             i = -1;
         }
+        else{
+           rtn_list[i] = rtn_list[i].replace(/-/g," ");
+        }
+        console.log(rtn_list[i]);
     }
 
     return rtn_list;
@@ -72,12 +86,31 @@ function create_community_div(JSON_response){
 
         const delete_button = document.createElement('button');
         delete_button.className = 'community_delete';
-        com_div.appendChild(delete_button);
+        delete_button.id = `button_${element}`;
 
+        com_div.appendChild(delete_button);
         house_div.appendChild(com_div);
+
+        document.getElementById(`button_${element}`).addEventListener('click', function(ev){
+            const container_div = ev.target.closest('.community_div');
+
+            //remove the elements within the table from the maptile
+            
+            container_div.remove();
+        })
     });
 
     return house_div;
+}
+
+function append_city_pointers(JSON_response){
+    const keys = Object.keys(JSON_response);
+    
+    keys.forEach(element => {
+        L.marker([JSON_response[element]['lat'],JSON_response[element]['lon'] ]).addTo(markers);
+    })
+
+
 }
 
 
@@ -150,16 +183,19 @@ function create_response_table(JSON_response,key){
 }
 
 
-var map = L.map('map_div').setView([51.505, -0.09], 13);
+var map = L.map('map_div').setView([52.636182, -1.133126], 7);
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map);
 
+var markers = L.layerGroup().addTo(map);
+
 document.getElementById('city_input').addEventListener('keyup',function (event){
     // if event is the enter key, add current value to the city_array 
     if (event.code === 'Enter'){
         log_city_list();
+        event.target.value = '';
     }
 })
 
@@ -176,7 +212,44 @@ document.getElementById('button').addEventListener('click',function (){
         let div_insert = document.getElementById('test');
 
         div_insert.innerHTML = '';
-        div_insert = create_community_div(return_response);
-        //div_insert.appendChild(create_community_div(return_response));
+        div_insert = create_community_div(return_response['graph']);
+        
+        //generates pointers on maptile
+        markers.clearLayers();
+        append_city_pointers(return_response['coordinates']);
+
+
     }
+})
+
+document.getElementById('help_button').addEventListener('click',function (event){
+    const overlay_container = document.getElementById('help_overlay');
+
+    const popup_div = document.createElement('div');
+
+    const popup_p = document.createElement('p');
+    popup_p.textContent = "Neat Nav utilises unique post codes for grouping. The locations avaliable are below:"
+    popup_div.appendChild(popup_p);
+
+    const popup_table = document.createElement('table');
+    
+    help_list.forEach(element => {
+        const new_row = document.createElement('tr');
+        const new_data = document.createElement('td');
+        new_data.textContent = element;
+    
+        new_row.appendChild(new_data);
+        popup_table.appendChild(new_row);
+    });
+
+    popup_div.appendChild(popup_table);
+
+    popup_div.addEventListener('click',function (){
+        popup_div.remove();
+        overlay_container.style.display = "none";
+    })
+
+    overlay_container.appendChild(popup_div);
+    overlay_container.style.display = "inline";
+
 })

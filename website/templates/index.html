@@ -10,12 +10,17 @@
 
 <body>
     <h1>Neat Nav</h1>
+    <div id="help_overlay"></div>
     <div class = "flex_container">
         <div id = "input_container">
             <p>Group cities into meaningful communities</p>
             <input type="text",name = 'city_input', id="city_input", placeholder = "Enter UK cities and press enter">
             <div id = 'community_output'></div>
-            <button type="submit" name="submit" id="button">submit</button>
+
+            <div id= 'button_container', class="flex_container">
+                <button type="submit" name="submit" id="button", class="button">Submit</button>
+                <button type="submit" name="submit" id="help_button",class="button">Help</button>
+            </div>
         </div>
         <div id = "map_div">testdata</div>
     </div>
